@@ -56,7 +56,6 @@ public class BookingsController : ControllerBase
         return booking is not null ? Ok(booking) : NotFound();
     }
 
-
     /// <summary>
     /// Skapar en ny bokning (endast för inloggade medlemmar).
     /// </summary>
@@ -98,6 +97,7 @@ public class BookingsController : ControllerBase
     /// </summary>
     /// <param name="id">BookingId att uppdatera.</param>
     /// <param name="dto">Uppdaterad information.</param>
+    [Authorize]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateBooking(string id, [FromBody] UpdateBookingDto dto)
     {
@@ -109,7 +109,9 @@ public class BookingsController : ControllerBase
             EVoucher = dto.EVoucher
         };
 
-        return await _service.UpdateAsync(updated) ? NoContent() : NotFound();
+        return await _service.UpdateAsync(updated) 
+            ? NoContent() 
+            : NotFound();
     }
 
     /// <summary>
