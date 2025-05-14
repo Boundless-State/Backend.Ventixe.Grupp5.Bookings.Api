@@ -8,15 +8,18 @@ using Ventixe.Grupp5.Bookings.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<BookingDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("SqlMockupConnection");
+    options.UseSqlServer(connectionString);
+});
 
-builder.Services.AddDbContext<BookingDbContext>(options =>options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
-
-builder.Services.AddOpenApi();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<BookingService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(c =>
 {
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -32,8 +35,22 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-});
 
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opts =>
@@ -42,23 +59,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         opts.Audience = builder.Configuration["Auth:ApiName"];
     });
 
-
-
 var app = builder.Build();
 
-app.MapOpenApi();
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ventix Booking API v1");
     c.RoutePrefix = "swagger";
+    c.DefaultModelsExpandDepth(-1);
 });
 
 app.MapControllers();
-
 app.Run();
+

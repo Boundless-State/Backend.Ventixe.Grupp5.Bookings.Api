@@ -14,6 +14,18 @@ public class BookingService
         _context = context;
     }
 
+    public async Task<IEnumerable<BookingEntity>> GetAllBookingsAsync()
+    {
+        var bookings = await _context.Bookings.ToListAsync();
+        return bookings;
+    }
+
+    public async Task<IEnumerable<BookingEntity>> GetAllBookingsAsync(string userId)
+    {
+        var bookings = await _context.Bookings.Where(x => x.UserId == userId).ToListAsync();
+        return bookings;
+    }
+
     public async Task<IEnumerable<BookingEntity>> GetAllAsync(BookingFilterDto filter, bool isAdmin, string? userId)
     {
         var query = _context.Bookings.AsQueryable();
@@ -76,7 +88,7 @@ public class BookingService
 
     public async Task<BookingEntity?> GetByIdAsync(string bookingId)
     {
-        return await _context.Bookings.FindAsync(bookingId);
+        return await _context.Bookings.FirstOrDefaultAsync(x => x.BookingId == bookingId);
     }
 
     public async Task<BookingEntity> CreateAsync(BookingEntity booking)
