@@ -30,7 +30,7 @@ public class BookingService
     {
         var query = _context.Bookings.AsQueryable();
 
-        if (!isAdmin &&userId != null)
+        if (!isAdmin && userId != null)
         {
             query = query.Where(q => q.UserId == userId);
         }
