@@ -40,6 +40,14 @@ public class BookingService
             query = query.Where(q => filter.Statuses.Contains(q.Status.ToString()));
         }
 
+        if (!string.IsNullOrWhiteSpace(filter.Search))
+        {
+            query = query.Where(q =>
+                q.CustomerName.Contains(filter.Search) ||
+                q.EventName.Contains(filter.Search) ||
+                q.InvoiceId.Contains(filter.Search));
+        }
+
         if (filter.FromDate.HasValue)
         {
             query = query.Where(b => b.BookingDate >= filter.FromDate.Value);
@@ -50,40 +58,31 @@ public class BookingService
             query = query.Where(b => b.BookingDate <= filter.ToDate.Value);
         }
 
-
-        if (!string.IsNullOrWhiteSpace(filter.Search))
-        {
-            query = query.Where(q =>
-                q.CustomerName.Contains(filter.Search) ||
-                q.EventName.Contains(filter.Search) ||
-                q.InvoiceId.Contains(filter.Search));
-        }
-
         if (!string.IsNullOrWhiteSpace(filter.SortBy))
         {
-            if (filter.SortBy == "BookingDate")
-                query = filter.SortDesc
-                    ? query.OrderByDescending(q => q.BookingDate)
-                    : query.OrderBy(q => q.BookingDate);
-
-            else if (filter.SortBy == "Price")
-                query = filter.SortDesc
-                    ? query.OrderByDescending(q => q.Price)
-                    : query.OrderBy(q => q.Price);
-
-            else
-                query = query.OrderBy(q => q.CreatedAt);
+            query = filter.SortBy switch
+            {
+                "BookingDate" => filter.SortDesc ? query.OrderByDescending(q => q.BookingDate) : query.OrderBy(q => q.BookingDate),
+                "Price" => filter.SortDesc ? query.OrderByDescending(q => q.Price) : query.OrderBy(q => q.Price),
+                "CustomerName" => filter.SortDesc ? query.OrderByDescending(q => q.CustomerName) : query.OrderBy(q => q.CustomerName),
+                "InvoiceId" => filter.SortDesc ? query.OrderByDescending(q => q.InvoiceId) : query.OrderBy(q => q.InvoiceId),
+                "Quantity" => filter.SortDesc ? query.OrderByDescending(q => q.Quantity) : query.OrderBy(q => q.Quantity),
+                "Amount" => filter.SortDesc ? query.OrderByDescending(q => q.Price * q.Quantity) : query.OrderBy(q => q.Price * q.Quantity),
+                "Status" => filter.SortDesc ? query.OrderByDescending(q => q.Status) : query.OrderBy(q => q.Status),
+                "EVoucher" => filter.SortDesc ? query.OrderByDescending(q => q.EVoucher) : query.OrderBy(q => q.EVoucher),
+                _ => query.OrderByDescending(q => q.CreatedAt)
+            };
         }
         else
         {
             query = query.OrderByDescending(q => q.CreatedAt);
         }
 
-        query = query.Skip(filter.Page * filter.PageSize)
+        query = query
+            .Skip((filter.Page - 1) * filter.PageSize)
             .Take(filter.PageSize);
 
         return await query.ToListAsync();
-
     }
 
     public async Task<BookingEntity?> GetByIdAsync(string bookingId)
@@ -125,6 +124,17 @@ public class BookingService
         _context.Bookings.Remove(booking);
         await _context.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<BookingStatsDto> GetStatisticsAsync()
+    {
+        var bookings = await _context.Bookings.ToListAsync();
+        return new BookingStatsDto
+        {
+            TotalBookings = bookings.Count,
+            TotalTicketsSold = bookings.Sum(b => b.Quantity),
+            TotalEarnings = bookings.Sum(b => b.Price * b.Quantity)
+        };
     }
 }
 

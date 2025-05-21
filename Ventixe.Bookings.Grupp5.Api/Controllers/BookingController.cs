@@ -147,4 +147,19 @@ public class BookingsController : ControllerBase
 
         return result ? Ok() : BadRequest();
     }
+
+    /// <summary>
+    /// Hämtar statistik över bokningar (antal, biljetter och intäkter) = (Endast Admin).
+    /// </summary>
+    /// <returns>
+    /// Ett <see cref="BookingStatsDto"/>-objekt som hämtar all bokningsstatistik.
+    /// </returns>
+    [HttpGet("stats")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetStats()
+    {
+        var stats = await _service.GetStatisticsAsync();
+        return Ok(stats);
+    }
+
 }
