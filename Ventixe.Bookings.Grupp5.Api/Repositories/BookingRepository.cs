@@ -2,65 +2,64 @@
 using Ventixe.Grupp5.Bookings.Api.Data;
 using Ventixe.Grupp5.Bookings.Api.Entities;
 
-namespace Ventixe.Grupp5.Bookings.Api.Repositories
+namespace Ventixe.Grupp5.Bookings.Api.Repositories;
+
+public interface IBookingRepository
 {
-    public interface IBookingRepository
+    Task<IEnumerable<BookingEntity>> GetAllAsync();
+    Task<IEnumerable<BookingEntity>> GetBookingsByUserIdAsync(string userId);
+    Task<BookingEntity?> GetBookingByIdAsync(string bookingId);
+    Task AddBookingAsync(BookingEntity booking);
+    Task UpdateBookingAsync(BookingEntity booking);
+    Task DeleteBookingAsync(string bookingId);
+}
+
+public class BookingRepository : IBookingRepository
+{
+    private readonly BookingDbContext _context;
+    public BookingRepository(BookingDbContext context)
     {
-        Task<IEnumerable<BookingEntity>> GetAllAsync();
-        Task<IEnumerable<BookingEntity>> GetBookingsByUserIdAsync(string userId);
-        Task<BookingEntity?> GetBookingByIdAsync(string bookingId);
-        Task AddBookingAsync(BookingEntity booking);
-        Task UpdateBookingAsync(BookingEntity booking);
-        Task DeleteBookingAsync(string bookingId);
+        _context = context;
     }
 
-    public class BookingRepository : IBookingRepository
+    public async Task<IEnumerable<BookingEntity>> GetAllAsync()
     {
-        private readonly BookingDbContext _context;
-        public BookingRepository(BookingDbContext context)
-        {
-            _context = context;
-        }
+        return await _context.Bookings.ToListAsync();
+    }
 
-        public async Task<IEnumerable<BookingEntity>> GetAllAsync()
-        {
-            return await _context.Bookings.ToListAsync();
-        }
+    // Använder denna metod för framtiden, ifall vi behöver funktionaliteten
+    // för att hämta bokningar för member som är inloggad (om vi vill skapa olika roles)
+    public async Task<IEnumerable<BookingEntity>> GetBookingsByUserIdAsync(string userId)
+    {
+        return await _context.Bookings.Where(b => b.UserId == userId)
+            .ToListAsync();
+    }
 
-        // Använder denna metod för framtiden, ifall vi behöver funktionaliteten
-        // för att hämta bokningar för member som är inloggad (om vi vill skapa olika roles)
-        public async Task<IEnumerable<BookingEntity>> GetBookingsByUserIdAsync(string userId)
-        {
-            return await _context.Bookings.Where(b => b.UserId == userId)
-                .ToListAsync();
-        }
+    public async Task<BookingEntity?> GetBookingByIdAsync(string bookingId)
+    {
+        return await _context.Bookings.FirstOrDefaultAsync
+            (b => b.BookingId == bookingId);
+    }
 
-        public async Task<BookingEntity?> GetBookingByIdAsync(string bookingId)
-        {
-            return await _context.Bookings.FirstOrDefaultAsync
-                (b => b.BookingId == bookingId);
-        }
+    public async Task AddBookingAsync(BookingEntity booking)
+    {
+        await _context.Bookings.AddAsync(booking);
+        await _context.SaveChangesAsync();
+    }
 
-        public async Task AddBookingAsync(BookingEntity booking)
+    public async Task UpdateBookingAsync(BookingEntity booking)
+    {
+        _context.Bookings.Update(booking);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteBookingAsync(string bookingId)
+    {
+        var booking = await _context.Bookings.FindAsync(bookingId);
+        if (booking != null)
         {
-            await _context.Bookings.AddAsync(booking);
+            _context.Bookings.Remove(booking);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateBookingAsync(BookingEntity booking)
-        {
-            _context.Bookings.Update(booking);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteBookingAsync(string bookingId)
-        {
-            var booking = await _context.Bookings.FindAsync(bookingId);
-            if (booking != null)
-            {
-                _context.Bookings.Remove(booking);
-                await _context.SaveChangesAsync();
-            }
         }
     }
 }

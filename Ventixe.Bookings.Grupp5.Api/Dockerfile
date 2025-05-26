@@ -12,19 +12,19 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Backend.Ventixe.Grupp5.Bookings.Api/Backend.Ventixe.Grupp5.Bookings.Api.csproj", "Backend.Ventixe.Grupp5.Bookings.Api/"]
-RUN dotnet restore "./Backend.Ventixe.Grupp5.Bookings.Api/Backend.Ventixe.Grupp5.Bookings.Api.csproj"
+COPY ["Ventixe.Bookings.Grupp5.Api/Ventixe.Bookings.Grupp5.Api.csproj", "Ventixe.Bookings.Grupp5.Api/"]
+RUN dotnet restore "./Ventixe.Bookings.Grupp5.Api/Ventixe.Bookings.Grupp5.Api.csproj"
 COPY . .
-WORKDIR "/src/Backend.Ventixe.Grupp5.Bookings.Api"
-RUN dotnet build "./Backend.Ventixe.Grupp5.Bookings.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Ventixe.Bookings.Grupp5.Api"
+RUN dotnet build "./Ventixe.Bookings.Grupp5.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Backend.Ventixe.Grupp5.Bookings.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Ventixe.Bookings.Grupp5.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Backend.Ventixe.Grupp5.Bookings.Api.dll"]
+ENTRYPOINT ["dotnet", "Ventixe.Bookings.Grupp5.Api.dll"]

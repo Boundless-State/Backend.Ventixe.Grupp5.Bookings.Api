@@ -59,6 +59,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         opts.Audience = builder.Configuration["Auth:ApiName"];
     });
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.ConfigureKestrel(x =>
+{
+    x.ListenAnyIP(int.Parse(port));
+});
+
+
 var app = builder.Build();
 
 app.UseCors(policy =>
