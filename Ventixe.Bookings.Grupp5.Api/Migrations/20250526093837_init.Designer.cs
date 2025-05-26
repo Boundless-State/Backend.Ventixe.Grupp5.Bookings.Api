@@ -9,10 +9,10 @@ using Ventixe.Grupp5.Bookings.Api.Data;
 
 #nullable disable
 
-namespace Ventixe.Bookings.Grupp5.Api.Migrations
+namespace Ventixe.Grupp5.Bookings.Api.Migrations
 {
     [DbContext(typeof(BookingDbContext))]
-    [Migration("20250501174732_init")]
+    [Migration("20250526093837_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace Ventixe.Bookings.Grupp5.Api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Ventixe.Bookings.Grupp5.Api.Entities.BookingEntity", b =>
+            modelBuilder.Entity("Ventixe.Grupp5.Bookings.Api.Entities.BookingEntity", b =>
                 {
                     b.Property<string>("BookingId")
                         .HasColumnType("nvarchar(450)");

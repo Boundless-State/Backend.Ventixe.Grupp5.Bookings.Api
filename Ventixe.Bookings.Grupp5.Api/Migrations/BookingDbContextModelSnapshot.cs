@@ -8,7 +8,7 @@ using Ventixe.Grupp5.Bookings.Api.Data;
 
 #nullable disable
 
-namespace Ventixe.Bookings.Grupp5.Api.Migrations
+namespace Ventixe.Grupp5.Bookings.Api.Migrations
 {
     [DbContext(typeof(BookingDbContext))]
     partial class BookingDbContextModelSnapshot : ModelSnapshot

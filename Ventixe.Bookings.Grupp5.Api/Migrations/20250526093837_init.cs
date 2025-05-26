@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Ventixe.Bookings.Grupp5.Api.Migrations
+namespace Ventixe.Grupp5.Bookings.Api.Migrations
 {
     /// <inheritdoc />
     public partial class init : Migration

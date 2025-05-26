@@ -35,9 +35,9 @@ public class BookingService
             query = query.Where(q => q.UserId == userId);
         }
 
-        if (filter.Statuses?.Any() == true)
+        if (filter.Status?.Any() == true)
         {
-            query = query.Where(q => filter.Statuses.Contains(q.Status.ToString()));
+            query = query.Where(q => filter.Status.Contains(q.Status.ToString()));
         }
 
         if (!string.IsNullOrWhiteSpace(filter.Search))

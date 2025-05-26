@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<BookingDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("SqlMockupConnection");
+    var connectionString = builder.Configuration.GetConnectionString("SqlConnection");
     options.UseSqlServer(connectionString);
 });
 
