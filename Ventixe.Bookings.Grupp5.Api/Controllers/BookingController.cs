@@ -9,6 +9,7 @@ namespace Ventixe.Grupp5.Bookings.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class BookingsController : ControllerBase
 {
     private readonly BookingService _service;
