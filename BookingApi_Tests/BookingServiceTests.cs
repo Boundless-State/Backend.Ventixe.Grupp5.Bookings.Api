@@ -72,16 +72,70 @@ public class BookingServiceTests
     [Fact]
     public async Task DeleteAsync_IfBookingExistsInDbDeleteAndReturnOK()
     {
+        //Arrange
         var context = GetInMemoryDbContext();
         var service = new BookingService(context);
-
         var booking = new BookingEntity { InvoiceId = "Z", BookingDate = DateTime.UtcNow, UserId = "u", CustomerName = "C", EventId = "E", EventName = "E", CategoryId = "C", CategoryName = "C", TicketCategoryId = "T", TicketCategoryName = "T", Price = 99, Quantity = 2 };
         var created = await service.CreateAsync(booking);
 
+        //Act
         var result = await service.DeleteAsync(created.BookingId);
         var deleted = await service.GetByIdAsync(created.BookingId);
 
+        //Assert
         Assert.True(result);
         Assert.Null(deleted);
     }
+    [Fact]
+    public async Task UpdateAsync_IfBookingExists_ReturnsTruePlusUpdates()
+    {
+        // Arrange
+        var context = GetInMemoryDbContext();
+        var service = new BookingService(context);
+        var booking = new BookingEntity
+        {
+            InvoiceId = "INV-002",
+            BookingDate = DateTime.UtcNow,
+            UserId = "user789",
+            CustomerName = "Update Test",
+            EventId = "event123",
+            EventName = "Update Event",
+            CategoryId = "cat002",
+            CategoryName = "UpdateCat",
+            TicketCategoryId = "tc002",
+            TicketCategoryName = "Standard",
+            Price = 100,
+            Quantity = 1
+        };
+        var created = await service.CreateAsync(booking);
+
+        // Act
+        created.Quantity = 5;
+        created.Status = BookingStatus.Confirmed;
+        var success = await service.UpdateAsync(created);
+        var updated = await service.GetByIdAsync(created.BookingId);
+
+        // Assert
+        Assert.True(success);
+        Assert.Equal(5, updated?.Quantity);
+        Assert.Equal(BookingStatus.Confirmed, updated?.Status);
+    }
+    [Fact]
+    public async Task GetAllBookingsAsync_ReturnAllBookingsWhenOK()
+    {
+        var context = GetInMemoryDbContext();
+        var service = new BookingService(context);
+
+        var b1 = new BookingEntity { InvoiceId = "A", BookingDate = DateTime.UtcNow, UserId = "u1", CustomerName = "Test1", EventId = "e1", EventName = "E1", CategoryId = "c", CategoryName = "Cat", TicketCategoryId = "t", TicketCategoryName = "T", Price = 50, Quantity = 1 };
+        var b2 = new BookingEntity { InvoiceId = "B", BookingDate = DateTime.UtcNow, UserId = "u2", CustomerName = "Test2", EventId = "e2", EventName = "E2", CategoryId = "c", CategoryName = "Cat", TicketCategoryId = "t", TicketCategoryName = "T", Price = 60, Quantity = 2 };
+
+        await service.CreateAsync(b1);
+        await service.CreateAsync(b2);
+
+        var all = await service.GetAllBookingsAsync();
+
+        Assert.Equal(2, all.Count());
+    }
+
+
 }
