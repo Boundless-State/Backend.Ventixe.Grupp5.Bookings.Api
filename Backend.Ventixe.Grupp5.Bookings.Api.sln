@@ -5,6 +5,8 @@ VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ventixe.Grupp5.Bookings.Api", "Ventixe.Bookings.Grupp5.Api\Ventixe.Grupp5.Bookings.Api.csproj", "{3F3E4A78-1697-4C16-883F-F14D1F9B1E09}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookingApi_Tests", "BookingApi_Tests\BookingApi_Tests.csproj", "{7424F00B-1ADF-4C13-A823-A7B9027C1120}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{3F3E4A78-1697-4C16-883F-F14D1F9B1E09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F3E4A78-1697-4C16-883F-F14D1F9B1E09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F3E4A78-1697-4C16-883F-F14D1F9B1E09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7424F00B-1ADF-4C13-A823-A7B9027C1120}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7424F00B-1ADF-4C13-A823-A7B9027C1120}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7424F00B-1ADF-4C13-A823-A7B9027C1120}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7424F00B-1ADF-4C13-A823-A7B9027C1120}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
